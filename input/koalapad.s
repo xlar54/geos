@@ -8,7 +8,7 @@
 .include "geosmac.inc"
 .include "c64.inc"
 
-.segment "koalapad"
+.segment "inputdrv"
 
 MouseInit:
 	jmp _MouseInit
@@ -36,11 +36,8 @@ dat7:
 	.byte 0
 
 _MouseInit:
-    LDA #$00
-    STA $3B
-    LDA #$08
-    STA $3A
-    STA $3C
+	LoadW mouseXPos, 8
+	LoadB mouseYPos, 8
     RTS
 
 _SlowMouse:
@@ -54,11 +51,11 @@ _UpdateMouse:
     PHA
     LDA #$35
     STA $01
-    LDA $DC02
+    LDA cia1base + 2
     PHA
-    LDA $DC03
+    LDA cia1base + 3
     PHA
-    LDA $DC00
+    LDA cia1base
     PHA
     JSR $FF37
     LDA $FE8E
@@ -114,20 +111,20 @@ _08FD:
     JSR $FF85
 _0927:
     PLA
-    STA $DC00
+    STA cia1base
     PLA
-    STA $DC03
+    STA cia1base+3
     PLA
-    STA $DC02
+    STA cia1base+2
     PLA
     STA $01
     RTS
 
 _0937:
     LDA #$00
-    STA $DC02
-    STA $DC03
-    LDA $DC01
+    STA cia1base+2
+    STA cia1base+3
+    LDA cia1base+1
     AND #$04
     CMP $FE89
     BEQ _095A
@@ -146,9 +143,9 @@ _095A:
 
 _095b:
     LDA #$FF
-    STA $DC02
+    STA cia1base+2
     LDA #$40
-    STA $DC00
+    STA cia1base
     LDX #$6E
 _0967:
     NOP
